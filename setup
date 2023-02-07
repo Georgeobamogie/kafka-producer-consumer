@@ -1,0 +1,29 @@
+from kafka import KafkaProducer, KafkaConsumer
+
+# Initialize the Kafka producer
+producer = KafkaProducer(
+    bootstrap_servers=['localhost:9092'],
+    value_serializer=lambda v: v.encode('utf-8')
+)
+
+# Publish a message to a topic
+def publish_message(topic, message):
+    producer.send(topic, value=message)
+
+# Initialize the Kafka consumer
+consumer = KafkaConsumer(
+    'sample-topic',
+    bootstrap_servers=['localhost:9092'],
+    auto_offset_reset='earliest',
+    enable_auto_commit=True,
+    group_id='sample-group',
+    value_deserializer=lambda v: v.decode('utf-8')
+)
+
+# Consume messages from a topic
+def consume_messages(consumer):
+    for message in consumer:
+        print(f"Received message: {message.value}")
+
+# Start consuming messages
+consume_messages(consumer)
